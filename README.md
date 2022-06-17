@@ -34,7 +34,7 @@ Recommended user settings
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.vue": "${capture}.test.ts, ${capture}.test.js",
-    "*.ts": "${capture}.js, ${capture}.js.map, ${capture}.d.ts",
+    "*.ts": "${capture}.test.ts, ${capture}.d.ts",
     "*.js": "${capture}.js, ${capture}.js.map, ${capture}.d.ts, ${capture}. d.ts.map",
     "tsconfig.json": "tsconfig.*.json",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
