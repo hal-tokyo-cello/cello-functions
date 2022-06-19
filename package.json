@@ -8,6 +8,7 @@
     "start": "func start"
   },
   "dependencies": {
+    "cello-core": "github:hal-tokyo-cello/cello-core",
     "validator": "^13.7.0"
   },
   "devDependencies": {
