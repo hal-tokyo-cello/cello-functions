@@ -48,4 +48,14 @@ describe("individual request", () => {
         ` And route param is ${id}`
     );
   });
+
+  test("name query param", async () => {
+    const req = { body: {} } as Req;
+    req.query = { name: name };
+    let res = await EndPoint(context, req);
+
+    expect(res.body.message).toBe(
+      `Hello, ${name}. This HTTP triggered function executed successfully. And route param is ${id}`
+    );
+  });
 });
