@@ -1,15 +1,14 @@
 name: functions
 
-# main ブランチに何らかの commit が追加されたら走らせる
 on:
   push:
     branches:
       - main
 
 env:
-  AZURE_FUNCTIONAPP_NAME: HAL-TH22-IH4C-IW4C-G01-functions01-yoshida # functionsの名前。書き換えてください
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # アップロードするディレクトリ。書き換えてください（現在はルートディレクトリすべてをデプロイしている）
-  NODE_VERSION: "16.x" # nodeのバージョンを指定。書き換えてください
+  AZURE_FUNCTIONAPP_NAME: th22ih4ciw4cg01celloFunctions
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # アップロードするディレクトリ（現在はルートディレクトリ）
+  NODE_VERSION: "16.x"
 
 jobs:
   build:
@@ -41,4 +40,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.FUNCTIONS_NAGIDERBY }} # プロファイラを登録したNAMEを指定してください
+          publish-profile: ${{ secrets.AZURE_FUNCTIONS_CREDENTIALS }} # プロファイラ
