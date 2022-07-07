@@ -1,10 +1,10 @@
 {
   "recommendations": [
+    "ms-azuretools.vscode-azurefunctions",
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "formulahendry.azure-storage-explorer",
     "mhutchie.git-graph",
-    "ms-azuretools.vscode-azurefunctions",
     "ms-azuretools.vscode-azureresourcegroups",
     "ms-azuretools.vscode-azurestorage",
     "ms-azuretools.vscode-cosmosdb",
