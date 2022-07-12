@@ -2,26 +2,41 @@ import { Avatar, Player, User } from "cello-core/core";
 import { IAccountRepository, Identifier } from "cello-core/infrastructure";
 import mongoose, { Schema, model, connect } from "mongoose";
 
-const UserSchema = new Schema({ email: String, password: String }, { timestamps: true });
+mongoose.connect(
+  "mongodb://ih4ciw4cadmin:ikZvgiIvLijUii4MfeJoXVmvfVCZZSqNtKNAkdLtCAMSjgzfKvXDGwK7T5nzIyXbZMfGanDDhchkI4twgT1xiA==@ih4ciw4cadmin.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@ih4ciw4cadmin"
+);
 
-const UserModel = model("User", UserSchema);
+const UserSchema = new mongoose.Schema({ email: String, password: String }, { timestamps: true });
+const QuestsSchema = new Schema({
+  name: String,
+  category: Number,
+  exp_get: Number,
+});
+const UserModel = mongoose.model("User", UserSchema);
+const QuestsModel = mongoose.model("Quests", QuestsSchema);
+
+const modelToInsert = new UserModel();
 
 export class AccountRepository implements IAccountRepository {
   getUser(id: Identifier): Promise<User> {
     throw new Error("Method not implemented.");
   }
   registerNewUser(user: User): Promise<void> {
-    mongoose.connect(
-      "mongodb://ih4ciw4cadmin:ikZvgiIvLijUii4MfeJoXVmvfVCZZSqNtKNAkdLtCAMSjgzfKvXDGwK7T5nzIyXbZMfGanDDhchkI4twgT1xiA==@ih4ciw4cadmin.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@ih4ciw4cadmin"
-    );
-    const modelToInsert = new UserModel();
-    modelToInsert["email"] = user.email;
-    modelToInsert["password"] = user.password;
+    try {
+      modelToInsert["email"] = user.email;
+      modelToInsert["password"] = user.password;
 
-    modelToInsert.save();
-    throw new Error("Method not implemented.");
+      modelToInsert.save();
+      return Promise.resolve();
+    } catch {
+      return Promise.reject("理由");
+    }
   }
+
   getUserPassword(id: Identifier): Promise<string> {
+    const findQuests = async () => {
+      return await QuestsModel.find({}).select("category");
+    };
     throw new Error("Method not implemented.");
   }
   updateUserPassword(user: unknown, password: unknown): Promise<void> {
