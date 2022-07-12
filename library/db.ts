@@ -42,6 +42,7 @@ export class AccountRepository implements IAccountRepository {
   getPlayer(id: Identifier): Promise<Player> {
     throw new Error("Method not implemented.");
   }
+  resisterAvatar(id: Identifier, race: number) {}
   getAvatar(player: Identifier): Promise<Avatar> {
     throw new Error("Method not implemented.");
   }
