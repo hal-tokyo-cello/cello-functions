@@ -6,8 +6,8 @@ export interface SignUpRequest {
 }
 
 export interface SignUpResponse {
-  message: string;
-  echo: string;
+  succeed: boolean;
+  error: string;
 }
 
 export type SignUpApiRequest = ApiRequest<SignUpRequest>;

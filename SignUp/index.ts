@@ -3,18 +3,19 @@ import { SignUpApi } from "../library/api/signUp";
 import { AccountRepository } from "../library/db";
 
 const httpTrigger: SignUpApi = async (context, req) => {
-  // const email = req.query?.email ?? req.body.email;
-  // const password = req.query?.password ?? req.body.password;
-  const responseMessage = "200";
+  const email = req.body.email;
+  const password = req.body.password;
+  const succeed = true;
+  const error = "";
 
   const repo = new AccountRepository();
 
-  User.register(repo, "email", "password");
+  User.register(repo, email, password);
 
   return {
     body: {
-      message: responseMessage,
-      echo: req.rawBody as string,
+      succeed: succeed,
+      error: error,
     },
   };
 };
