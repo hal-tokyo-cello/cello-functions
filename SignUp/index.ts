@@ -3,14 +3,19 @@ import { SignUpApi } from "../library/api/signUp";
 import { AccountRepository } from "../library/db";
 
 const httpTrigger: SignUpApi = async (context, req) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const succeed = true;
-  const error = "";
+  let succeed = true;
+  let error = "";
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
 
-  const repo = new AccountRepository();
+    const repo = new AccountRepository();
 
-  User.register(repo, email, password);
+    User.register(repo, email, password);
+  } catch (error) {
+    succeed = false;
+    error = error;
+  }
 
   return {
     body: {
