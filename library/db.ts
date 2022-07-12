@@ -34,9 +34,6 @@ export class AccountRepository implements IAccountRepository {
   }
 
   getUserPassword(id: Identifier): Promise<string> {
-    const findQuests = async () => {
-      return await QuestsModel.find({}).select("category");
-    };
     throw new Error("Method not implemented.");
   }
   updateUserPassword(user: unknown, password: unknown): Promise<void> {
