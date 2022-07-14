@@ -1,3 +1,4 @@
+import { PlayerUpgradeOption, User } from "cello-core/core";
 import { AvatarSelectApi } from "../library/api/avatarSelect";
 import { AccountRepository } from "../library/db";
 
@@ -10,7 +11,9 @@ const httpTrigger: AvatarSelectApi = async (context, req) => {
 
     const repo = new AccountRepository();
 
-    repo.resisterAvatar(id, race);
+    const option = new PlayerUpgradeOption(race, 0);
+
+    await (await repo.getUser(id)).upgradeToPlayer(option);
   } catch (e) {
     // if(e instanceof エラー名){}
     succeed = false;
