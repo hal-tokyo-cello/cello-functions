@@ -1,4 +1,4 @@
-import { PlayerUpgradeOption, User } from "cello-core/core";
+import { PlayerUpgradeOption } from "cello-core/core";
 import { AvatarSelectApi } from "../library/api/avatarSelect";
 import { AccountRepository } from "../library/db";
 
