@@ -37,12 +37,16 @@ const modelToInsert = new UserModel();
 // const modelToInsert = new AvatarModel();
 
 export class AccountRepository implements IAccountRepository {
-  getUser(id: Identifier): Promise<User> {
-    // try {
-    //   return Promise.resolve("");
-    // } catch {
-    //   return Promise.reject("理由");
-    // }
+  async getUser(id: Identifier): Promise<User> {
+    const query = new Promise<User>((res, rej) => {});
+    return query.then((data) => data).catch((err) => Promise.reject(err));
+    try {
+      return Promise.resolve(await query);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    return Promise.resolve(new User(this, id, "email"));
+
     throw new Error("Method not implemented.");
   }
   registerNewUser(user: User): Promise<void> {
