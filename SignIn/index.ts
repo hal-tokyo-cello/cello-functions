@@ -1,17 +1,26 @@
+import { LoginOptions, User } from "cello-core/core";
 import { SignInApi } from "../library/api/signIn";
+import { AccountRepository } from "../library/db";
 
 const httpTrigger: SignInApi = async (context, req) => {
-  const name = req.query?.name ?? req.body.name;
-  const responseMessage =
-    (name
-      ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-      : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.") +
-    ` And route param is ${context.bindingData.id}`;
+  let succeed = true;
+  let error = "";
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const repo = new AccountRepository();
+    const loginOption = new LoginOptions(email, password);
+    await (await repo.getUser(email)).login(loginOption);
+  } catch (error) {
+    succeed = false;
+    error = error;
+  }
 
   return {
     body: {
-      message: responseMessage,
-      echo: req.rawBody as string,
+      succeed: succeed,
+      error: error,
     },
   };
 };

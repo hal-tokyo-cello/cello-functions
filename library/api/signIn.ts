@@ -1,12 +1,12 @@
 import { ApiHandler, ApiRequest, ApiResponse } from "../types";
 
 export interface SignInRequest {
-  name: string;
+  email: string;
+  password: string;
 }
 
 export interface SignInResponse {
-  message: string;
-  echo: string;
+  succeed: boolean;
 }
 
 export type SignInApiRequest = ApiRequest<SignInRequest>;
