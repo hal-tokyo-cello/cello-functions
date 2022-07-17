@@ -9,10 +9,8 @@ export const sendOTP = (email: string, otp: string) => {
     from: "test@example.com", // SendGridで作成したメールアドレス
     subject: "Sending with SendGrid is Fun",
     text: "テキストの内容",
-    html: "<strong>HTMLの内容</strong>",
+    html: "あなたの認証コードは  <strong>" + otp + "</strong> です。",
   };
 
-  if (otp === "バックエンド側から受け取った認証コード") {
-    sgMail.send(msg);
-  }
+  sgMail.send(msg);
 };
