@@ -1,17 +1,23 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { QuestsApi } from "../library/api/quests";
+import { QuestRepository } from "../library/db";
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger function processed a request.');
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+const httpTrigger: QuestsApi = async () => {
+    // const responseMessage = 200;
+    const repo = new QuestRepository();
+    const Quests = await repo.getQuests();
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: responseMessage
+    return {
+        body: {
+            quests: Quests.map(q => ({
+                title: q.title,
+                experience: q.experience,
+                genre: "", // NO implementation
+                clear: false // No implementation
+            }))
+        },
     };
 
-};
+    
+}
 
 export default httpTrigger;
