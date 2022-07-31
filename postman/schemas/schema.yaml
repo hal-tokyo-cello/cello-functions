@@ -1,0 +1,782 @@
+openapi: 3.0.0
+
+info:
+  version: "0.4.0"
+  title: "CELLO Functions"
+  license:
+    name: MIT
+
+servers:
+  - url: "https://api.cellolearn.net"
+    description: Azure Functions
+  - url: https://a33b4bb8-3240-48a6-8046-f0d522d06856.mock.pstmn.io
+    description: Mock server
+
+paths:
+  /avatars:
+    get:
+      summary: 選択可能アバターを取得する
+      operationId: getAvatarList
+      responses:
+        "200":
+          $ref: "#/components/responses/getAvatarList-200"
+
+  /quests/{quest}:
+    get:
+      summary: クエストを取得する
+      description: 一覧画面の表示のためのAPI
+      operationId: getQuestSummary
+      parameters:
+        - $ref: "#/components/parameters/quest-path"
+        - $ref: "#/components/parameters/user-query"
+      responses:
+        "200":
+          $ref: "#/components/responses/getQuestSummary-200"
+        "404":
+          $ref: "#/components/responses/getQuestSummary-404"
+  /quests/{quest}/answer:
+    post:
+      summary: クエストに回答するリクエスト
+      description: クエストの問題画面で回答する用API
+      operationId: answerQuest
+      parameters:
+        - $ref: "#/components/parameters/quest-path"
+      requestBody:
+        $ref: "#/components/requestBodies/answerQuest"
+      responses:
+        "200":
+          $ref: "#/components/responses/answerQuest-200"
+        "400":
+          $ref: "#/components/responses/answerQuest-400"
+  /quests/summary:
+    get:
+      summary: クエストのリストを取得する
+      description: 一覧画面の表示のためのAPI
+      operationId: getQuestSummaryList
+      responses:
+        "200":
+          $ref: "#/components/responses/getQuestSummaryList-200"
+
+  /users/{user}:
+    get:
+      summary: 指定したユーザーの情報を取得する
+      description: アバター画面やプロフィール画面にアクセスした際に取得する情報用のAPI
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+      responses:
+        "200":
+          $ref: "#/components/responses/getUser-200"
+        "404":
+          $ref: "#/components/responses/getUser-404"
+    put:
+      summary: 各ユーザー情報を編集する
+      description: プロフィール画面にアクセスした際にユーザ情報の更新、退会画面時のユーザ情報の更新用API
+      operationId: updateUser
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+      responses:
+        "201":
+          $ref: "#/components/responses/updateUser-201"
+        "204":
+          $ref: "#/components/responses/updateUser-204"
+  /users/{user}/avatar:
+    post:
+      summary: 指定されたユーザーのアバターを選択する
+      description: 新規登録時に選択したアバターを選択、アバター画面の育成アバターの表示、アバターをプロフィールアイコンとして使用する用のAPI
+      operationId: selectAvatar
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+      requestBody:
+        $ref: "#/components/requestBodies/selectAvatar"
+      responses:
+        "200":
+          $ref: "#/components/responses/selectAvatar-200"
+        "400":
+          $ref: "#/components/responses/selectAvatar-400"
+  /users/{user}/avatar/evolve:
+    post:
+      summary: アバター進化に対する操作を更新リクエストする
+      description: アバター画面におけるアバターへ対する進化などの操作用のAPI
+      operationId: evolveAvatar
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+      responses:
+        "200":
+          $ref: "#/components/responses/evolveAvatar-200"
+        "400":
+          $ref: "#/components/responses/evolveAvatar-400"
+  /users/{user}/items:
+    get:
+      summary: ユーザーの所有アイテムをリストアップする
+      operationId: getUserInventory
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+      responses:
+        "200":
+          $ref: "#/components/responses/getUserInventory-200"
+  /users/{user}/items/{item}:
+    put:
+      summary: アイテムを使用する
+      description: アバター画面におけるアバターへ対するアイテム使用のAPI
+      operationId: consumeItem
+      parameters:
+        - $ref: "#/components/parameters/user-path"
+        - $ref: "#/components/parameters/item-path"
+      requestBody:
+        $ref: "#/components/requestBodies/consumeItem"
+      responses:
+        "201":
+          $ref: "#/components/responses/consumeItem-201"
+        "204":
+          $ref: "#/components/responses/consumeItem-204"
+        "400":
+          $ref: "#/components/responses/consumeItem-400"
+  /users/signin:
+    post:
+      summary: サインインをリクエストする
+      description: サインインするAPI
+      operationId: signIn
+      requestBody:
+        $ref: "#/components/requestBodies/signIn"
+      responses:
+        "200":
+          $ref: "#/components/responses/signIn-200"
+        "400":
+          $ref: "#/components/responses/signIn-400"
+        "404":
+          $ref: "#/components/responses/signIn-404"
+  /users/signup:
+    post:
+      summary: サインアップをリクエストする
+      description: サインアップ画面からサーバにサインアップをリクエストする用のAPI
+      operationId: signUp
+      requestBody:
+        $ref: "#/components/requestBodies/signUp"
+      responses:
+        "200":
+          $ref: "#/components/responses/signUp-200"
+        "400":
+          $ref: "#/components/responses/signUp-400"
+
+components:
+  schemas:
+    avatar:
+      description: アバター
+      type: object
+      required:
+        - race
+        - totalExp
+        - evolved
+      properties:
+        race:
+          description: アバターの種族
+          type: number
+        totalExp:
+          description: アバターの経験値
+          type: number
+        evolved:
+          description: アバターが進化したかどうか。
+          type: boolean
+        iconUrl:
+          description: アバターアイコン画像のURL
+          type: string
+    user:
+      description: ユーザー
+      type: object
+      required:
+        - accountID
+        - name
+        - avatar
+      properties:
+        accountID:
+          description: ユーザーのID
+          type: string
+        name:
+          description: ユーザー名
+          type: string
+        avatar:
+          $ref: "#/components/schemas/avatar"
+        createDate:
+          description: 登録時日
+          type: number
+        updateDate:
+          description: ユーザー情報更新時日
+          type: number
+        leaveDate:
+          description: 退会時日
+          type: number
+        lastLogin:
+          description: 最後サインイン時日
+          type: number
+    userCredential:
+      description: ユーザーがサインイン・サインアップする際に使うクレデンシャル
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          description: ユーザーのメールアドレス
+          type: string
+        password:
+          description: ユーザーのパスワード
+          type: string
+    answer:
+      description: クエストの答
+      type: object
+      required:
+        - display
+        - value
+      properties:
+        display:
+          type: string
+          description: 答を表示する文字列
+        value:
+          type: string
+          description: 答を代表する値
+    quest:
+      description: クエスト
+      allOf:
+        - $ref: "#/components/schemas/questSummary"
+        - type: object
+          required:
+            - question
+            - options
+          properties:
+            question:
+              description: 問題文
+              type: string
+            options:
+              description: 解答群
+              type: array
+              items:
+                $ref: "#/components/schemas/answer"
+    questSummary:
+      type: object
+      required:
+        - title
+        - experience
+        - genre
+      properties:
+        title:
+          description: クエストのタイトル
+          type: string
+        experience:
+          description: クエストを突破する際に得られる経験値
+          type: number
+        genre:
+          description: クエストのジャンル
+          type: string
+        cleared:
+          description: クエストがクリアされたかどうか。ユーザーを指定した時のみ返す。
+          type: boolean
+    item:
+      type: object
+      properties:
+        id:
+          description: アイテムのID
+          type: string
+        name:
+          description: アイテム名
+          type: string
+        iconUrl:
+          description: アイテムアイコンの画像URL
+          type: string
+
+    error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+            - errors
+          properties:
+            code:
+              description: HTTPステータスコード
+              type: number
+            message:
+              description: エラーメッセージ
+              type: string
+            errors:
+              description: 個別のエラー
+              type: array
+              items:
+                type: object
+                required:
+                  - message
+                  - reason
+                properties:
+                  message:
+                    description: 個別エラーのメッセージ
+                    type: string
+                  reason:
+                    description: 個別エラーの発生理由
+                    type: string
+
+  parameters:
+    quest-path:
+      name: quest
+      in: path
+      description: クエストのID
+      required: true
+      schema:
+        type: number
+      example: 1
+    item-path:
+      name: item
+      in: path
+      description: アイテムのID
+      required: true
+      schema:
+        type: number
+      example: 1
+    user-query:
+      name: user
+      in: query
+      description: Base64でエンコーディングされたユーザーのID
+      required: false
+      schema:
+        type: string
+      example: m352ApMZDXIVO4Oz
+    user-path:
+      name: user
+      in: path
+      description: Base64でエンコーディングされたユーザーのID
+      required: true
+      schema:
+        type: string
+      example: m352ApMZDXIVO4Oz
+
+  responses:
+    getQuestSummaryList-200:
+      description: クエストのリスト取得に成功
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              quests:
+                type: array
+                items:
+                  $ref: "#/components/schemas/questSummary"
+          examples:
+            normal:
+              $ref: "#/components/examples/getQuestSummaryList-response-normal"
+    getQuestSummary-200:
+      description: クエストの取得に成功
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              quest:
+                $ref: "#/components/schemas/questSummary"
+          examples:
+            normal:
+              $ref: "#/components/examples/getQuestSummary-response-normal"
+            withUser:
+              $ref: "#/components/examples/getQuestSummary-response-withUser"
+    answerQuest-200:
+      description: 回答に成功
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+          examples:
+            correct:
+              $ref: "#/components/examples/answerQuest-response-correct"
+            incorrect:
+              $ref: "#/components/examples/answerQuest-response-incorrect"
+    signIn-200:
+      description: サインインに成功
+      content:
+        "application/json":
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/error"
+              - type: object
+                required:
+                  - user
+                properties:
+                  user:
+                    $ref: "#/components/schemas/user"
+          examples:
+            normal:
+              $ref: "#/components/examples/signIn-response-normal"
+            fail:
+              $ref: "#/components/examples/signIn-response-fail"
+    signUp-200:
+      description: サインアップに成功
+    getUser-200:
+      description: ""
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/user"
+          examples:
+            normal:
+              $ref: "#/components/examples/getUser-response-normal"
+    updateUser-201:
+      description: ユーザー情報の更新判定に成功
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/user"
+          examples:
+            default:
+              $ref: "#/components/examples/updateUser-response-normal"
+            fail:
+              $ref: "#/components/examples/updateUser-response-fail"
+    updateUser-204:
+      description: ユーザー情報の更新内容なし
+    selectAvatar-200:
+      description: アバター選択に成功
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/avatar"
+          examples:
+            default:
+              description: 正常にアバター選択に成功
+              value:
+                succeed: true
+            exist:
+              description: アバターは既に登録されているため失敗
+              value:
+                succeed: false
+                error: avatar already exist
+    evolveAvatar-200:
+      description: アバター進化判定に成功
+    getAvatarList-200:
+      description: 選択可能アバターのリスト
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              avatars:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - race
+                    - imageUrl
+                  properties:
+                    race:
+                      description: アバターの種族
+                      type: number
+                    imageUrl:
+                      description: アバターの画像URL
+                      type: string
+    getUserInventory-200:
+      description: ユーザーの所有アイテムのリスト
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              inventory:
+                type: array
+                items:
+                  allOf:
+                    - $ref: "#/components/schemas/item"
+                    - type: object
+                      properties:
+                        quantity:
+                          description: 所有アイテムの数
+                          type: number
+    consumeItem-201:
+      description: アイテム使用判定に成功
+    consumeItem-204:
+      description: アイテム使用なし
+
+    getQuestSummary-404:
+      description: 存在しないクエストを取得する
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    answerQuest-400:
+      description: 未選択のままリクエスト
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    signIn-400:
+      description: リクエストに問題がある
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    signIn-404:
+      description: 未登録ユーザー情報でサインインする
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    signUp-400:
+      description: リクエストに問題がある
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    getUser-404:
+      description: 存在しないユーザー情報を取得する
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    selectAvatar-400:
+      description: リクエストに問題がある
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    evolveAvatar-400:
+      description: リクエストに問題がある
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+    consumeItem-400:
+      description: リクエストに問題がある
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/error"
+
+  examples:
+    getQuestSummaryList-response-normal:
+      description: 正常に取得した際の例
+      value:
+        quests:
+          - title: クエスト1
+            experience: 100
+            genre: 4択問題
+            clear: false
+          - title: クエスト2
+            experience: 100
+            genre: 4択問題
+            clear: false
+          - title: クエスト3
+            experience: 300
+            genre: 組み合わせ問題
+            clear: false
+    getQuestSummary-response-normal:
+      description: 正常に取得した際の例
+      value:
+        quest:
+          title: クエスト1
+          experience: 100
+          genre: 4択問題
+    getQuestSummary-response-withUser:
+      description: ユーザーを指定した際に取得した例
+      value:
+        quest:
+          title: クエスト1
+          experience: 100
+          genre: 4択問題
+          clear: true
+    answerQuest-request-correct:
+      description: 正解
+      value:
+        answer: "1"
+    answerQuest-request-incorrect:
+      description: 不正解
+      value:
+        answer: "2"
+    answerQuest-request-unanswered:
+      description: 未回答
+      value:
+        answer: ""
+    answerQuest-response-correct:
+      description: 正解
+      value:
+        succeed: true
+    answerQuest-response-incorrect:
+      description: 不正解
+      value:
+        succeed: false
+    answerQuest-response-unanswered:
+      description: 未回答
+      value:
+        succeed: false
+        error: answer not selected
+    signIn-request-normal:
+      description: 成功のサインイン
+      value:
+        email: alice@example.com
+        password: alice's password
+    signIn-request-fail:
+      description: 失敗のサインイン
+      value:
+        email: alice@example.com
+        password: doe's password
+    signIn-request-missingEmail:
+      description: メールアドレスが空のまま
+      value:
+        email: ""
+        password: alice's password
+    signIn-request-missingPassword:
+      description: パスワードが空のまま
+      value:
+        email: alice@example.com
+        password: ""
+    signIn-request-unregistered:
+      description: 未登録ユーザー
+      value:
+        email: johndoe@example.com
+        password: john doe's password
+    signIn-response-normal:
+      description: 正常サインインに成功
+      value:
+        succeed: true
+    signIn-response-fail:
+      description: 正常サインインに失敗
+      value:
+        succeed: false
+    signIn-response-missingEmail:
+      description: メールアドレスが欠けている
+      value:
+        succeed: false
+        error: missing email address
+    signIn-response-missingPassword:
+      description: パスワードが欠けている
+      value:
+        succeed: false
+        error: missing password
+    signUp-request-normal:
+      description: 新規ユーザーのサインアップ
+      value:
+        email: bob@example.com
+        password: bob's password
+    signUp-request-exist:
+      description: 既存ユーザー情報でサインアップ
+      value:
+        email: alice@example.com
+        password: bob's password
+    signUp-request-illegalEmail:
+      description: フォーマットが正しくないメールアドレスでサインアップ
+      value:
+        email: bob
+        password: bob's password
+    signUp-response-normal:
+      description: 新規ユーザーサインアップに成功
+      value:
+        succeed: true
+    signUp-response-exist:
+      description: メールアドレスはすでに登録されているため、サインアップに失敗
+      value:
+        succeed: false
+        error: user exist
+    signUp-response-illegalEmail:
+      description: メールアドレスのフォーマットが正しくありません
+      value:
+        succeed: false
+        error: illegal email format
+    getUser-response-normal:
+      description: 正常に取得した際の例
+      value:
+        user:
+          accountID: alice@example.com
+          email: alice@example.com
+          password: alice's password
+          name: alice
+          race: 0
+          totalExp: 1400
+          createDate: 1654041600 # 1 Jul 2022
+          updateDate: 1654473600 # 6 Jul 2022
+          mailVerify: 1
+        succeed: true
+    updateUser-response-normal:
+      description: ユーザー情報の更新に成功
+      value:
+        succeed: true
+    updateUser-response-fail:
+      description: ユーザ情報の更新に失敗
+      value:
+        succeed: false
+
+  requestBodies:
+    answerQuest:
+      content:
+        "application/json":
+          schema:
+            description: クエストを回答するのリクエスト
+            type: object
+            required:
+              - answer
+            properties:
+              answer:
+                description: 回答する答の値
+                type: string
+          examples:
+            correct:
+              $ref: "#/components/examples/answerQuest-request-correct"
+            incorrect:
+              $ref: "#/components/examples/answerQuest-request-incorrect"
+            unanswered:
+              $ref: "#/components/examples/answerQuest-request-unanswered"
+    signIn:
+      content:
+        "application/json":
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/userCredential"
+          examples:
+            normal:
+              $ref: "#/components/examples/signIn-request-normal"
+            fail:
+              $ref: "#/components/examples/signIn-request-fail"
+            missingEmail:
+              $ref: "#/components/examples/signIn-request-missingEmail"
+            missingPassword:
+              $ref: "#/components/examples/signIn-request-missingPassword"
+            unregistered:
+              $ref: "#/components/examples/signIn-request-unregistered"
+    signUp:
+      content:
+        "application/json":
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/userCredential"
+          examples:
+            normal:
+              $ref: "#/components/examples/signUp-request-normal"
+            exist:
+              $ref: "#/components/examples/signUp-request-exist"
+            illegalEmail:
+              $ref: "#/components/examples/signUp-request-illegalEmail"
+    selectAvatar:
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/avatar"
+    consumeItem:
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    item:
+                      description: 使用するアイテムのID
+                      type: string
+                    quantity:
+                      description: 使用するアイテムの数
+                      type: number
