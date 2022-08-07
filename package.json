@@ -12,14 +12,15 @@
   },
   "dependencies": {
     "cello-core": "github:hal-tokyo-cello/cello-core",
-    "mongodb": "^4.7.0",
-    "mongoose": "^6.4.2",
+    "mongodb": "^4.8.1",
+    "mongoose": "^6.5.1",
     "validator": "^13.7.0"
   },
   "devDependencies": {
     "@azure/functions": "^3.0.0",
     "@types/jest": "^28.1.1",
     "@types/node": "^18.0.1",
+    "@types/validator": "^13.7.5",
     "azure-functions-core-tools": "^4.0.4590",
     "jest": "^28.1.1",
     "ts-jest": "^28.0.5",
