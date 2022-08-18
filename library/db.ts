@@ -52,16 +52,11 @@ const UserModel = mongoose.model("User", UserSchema);
 const QuestModel = mongoose.model("Quest", QuestSchema);
 const AvatarModel = mongoose.model("Avatar", AvatarSchema);
 
-const UserModelToInsert = new UserModel();
-const QuestModelToInsert = new QuestModel();
-const AvatarModelToInsert = new AvatarModel();
-
 export class AccountRepository implements IAccountRepository {
   async getUser(id: Identifier): Promise<User> {
     // return query.then((data) => data).catch((err) => Promise.reject(err));
     try {
-      //ここはIDでfindするのではなく、emailで絞り込む
-      const result = await UserModel.findOne({ email: id });
+      const result = await UserModel.findById(id).exec();
 
       if (result == null) {
         throw "user not found";
@@ -70,7 +65,6 @@ export class AccountRepository implements IAccountRepository {
       if (result.email == undefined) {
         throw "invalid user";
       }
-      // coreのabstractを削除すると解消されたのを確認
       return Promise.resolve(new User(this, result.id, result.email));
     } catch (error) {
       return Promise.reject(error);
@@ -78,9 +72,10 @@ export class AccountRepository implements IAccountRepository {
   }
   registerNewUser(user: User): Promise<void> {
     try {
-      UserModelToInsert["email"] = user.email;
-      UserModelToInsert["password"] = user.password;
-
+      const UserModelToInsert = new UserModel({
+        email: user.email,
+        password: user.password,
+      });
       UserModelToInsert.save();
       return Promise.resolve();
     } catch (error) {
@@ -90,8 +85,7 @@ export class AccountRepository implements IAccountRepository {
 
   async getUserPassword(id: Identifier): Promise<string> {
     try {
-      // findOneで1件取り出し
-      const result = await UserModel.findOne({ email: id });
+      const result = await this.getUser(id);
 
       if (result == null) {
         throw "user not found";
@@ -108,7 +102,7 @@ export class AccountRepository implements IAccountRepository {
   }
   updateUserPassword(user: unknown, password: unknown): Promise<void> {
     try {
-      UserModel.updateOne({ email: user }, { $set: { password: password } });
+      UserModel.findByIdAndUpdate(user, { $set: { password: password } });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -117,7 +111,7 @@ export class AccountRepository implements IAccountRepository {
   async getPlayer(id: Identifier): Promise<Player> {
     try {
       //Mongodbの処理を書き入れる
-      const result = await UserModel.findOne({ email: id });
+      const result = await this.getUser(id);
 
       if (result == null) {
         throw "user not found";
@@ -126,7 +120,7 @@ export class AccountRepository implements IAccountRepository {
       if (result.email == undefined) {
         throw "invalid email";
       }
-      return Promise.resolve(new Player(this, result.id, result.email));
+      return Promise.resolve(new Player(this, result.accountId, result.email));
     } catch (error) {
       return Promise.reject(error);
     }
@@ -134,7 +128,7 @@ export class AccountRepository implements IAccountRepository {
   async getAvatar(player: Identifier): Promise<Avatar> {
     try {
       //Mongodbの処理を書き入れる
-      const result = await UserModel.findOne({ email: player });
+      const result = await UserModel.findById(player).exec();
 
       if (result == null) {
         throw "user not found";
@@ -163,8 +157,9 @@ export class AccountRepository implements IAccountRepository {
 
   upgradeUserToPlayer(user: User, player: Player): Promise<void> {
     try {
-      UserModel.updateOne({ email: user.email }, { $set: { race: player.avatar.race } });
-      UserModel.updateOne({ email: user.email }, { $set: { totalExp: player.avatar.totalExp } });
+      UserModel.findByIdAndUpdate(user.accountId, {
+        $set: { race: player.avatar.race, totalExp: player.avatar.totalExp },
+      });
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -172,7 +167,7 @@ export class AccountRepository implements IAccountRepository {
   }
   unregisterUser(id: Identifier): Promise<void> {
     try {
-      UserModel.remove({ email: id });
+      UserModel.findByIdAndRemove(id).exec();
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -180,7 +175,7 @@ export class AccountRepository implements IAccountRepository {
   }
   unregisterPlayer(id: Identifier): Promise<void> {
     try {
-      UserModel.remove({ email: id });
+      this.unregisterUser(id);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
