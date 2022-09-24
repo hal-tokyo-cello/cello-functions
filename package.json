@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "cello-core": "github:hal-tokyo-cello/cello-core",
-    "mongodb": "^4.9.0",
+    "mongodb": "^4.9.1",
     "mongoose": "^6.5.1",
     "validator": "^13.7.0"
   },
