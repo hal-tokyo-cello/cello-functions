@@ -1,5 +1,5 @@
 import { QuestsApi } from "../library/api/quests";
-import { QuestRepository } from "../library/db";
+import { QuestRepository } from "../library/db/mongodb";
 
 const httpTrigger: QuestsApi = async () => {
     // const responseMessage = 200;
