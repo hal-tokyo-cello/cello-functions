@@ -1,28 +1,41 @@
 import { User } from "cello-core/core";
-import { SignUpApi } from "../library/api/signUp";
-import { AccountRepository } from "../library/db";
+import validator from "validator";
+import { MemoryDatabase } from "../library/db/memory";
+import { catch404, catch500, conclude, report } from "../library/functional";
+import { ApiHandler, Error } from "../library/types";
 
-const httpTrigger: SignUpApi = async (context, req) => {
-  let succeed = true;
-  let error = "";
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
+export interface SignUpRequest {
+  email: string;
+  password: string;
+}
 
-    const repo = new AccountRepository();
+export interface SignUpResponse {}
 
-    User.register(repo, email, password);
-  } catch (error) {
-    succeed = false;
-    error = error;
-  }
+const signUp = ({ email, password }: SignUpRequest): SignUpResponse =>
+  User.register(MemoryDatabase.instance, email, password)
+    .then(() => ({}))
+    .catch((error) =>
+      !!error
+        ? Promise.reject({ message: "try again later", reason: "internal error" })
+        : Promise.reject({ message: "fail to register user", reason: "internal error" })
+    );
 
-  return {
-    body: {
-      succeed: succeed,
-      error: error,
-    },
-  };
-};
+const verifyEmail = (req: SignUpRequest): Promise<SignUpRequest> =>
+  validator.isEmail(req.email) ? Promise.resolve(req) : Promise.reject({ message: "invalid email" } as Error);
+
+const verifyDuplicate = (req: SignUpRequest): Promise<SignUpRequest> =>
+  MemoryDatabase.instance.getUser(req.email).then(
+    () => Promise.reject({ message: "denied for registration", reason: "the email address had been used" }),
+    () => Promise.resolve(req)
+  );
+
+const httpTrigger: ApiHandler<SignUpResponse, SignUpRequest> = (context, req) =>
+  Promise.resolve(req.body)
+    .then(verifyEmail)
+    .then(verifyDuplicate)
+    .catch(catch404)
+    .then(signUp)
+    .catch(catch500)
+    .then(conclude, report);
 
 export default httpTrigger;
