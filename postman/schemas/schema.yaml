@@ -287,36 +287,31 @@ components:
     error:
       type: object
       required:
-        - error
+        - code
+        - message
+        - errors
       properties:
-        error:
-          type: object
-          required:
-            - code
-            - message
-            - errors
-          properties:
-            code:
-              description: HTTPステータスコード
-              type: number
-            message:
-              description: エラーメッセージ
-              type: string
-            errors:
-              description: 個別のエラー
-              type: array
-              items:
-                type: object
-                required:
-                  - message
-                  - reason
-                properties:
-                  message:
-                    description: 個別エラーのメッセージ
-                    type: string
-                  reason:
-                    description: 個別エラーの発生理由
-                    type: string
+        code:
+          description: HTTPステータスコード
+          type: number
+        message:
+          description: エラーメッセージ
+          type: string
+        errors:
+          description: 個別のエラー
+          type: array
+          items:
+            type: object
+            required:
+              - message
+              - reason
+            properties:
+              message:
+                description: 個別エラーのメッセージ
+                type: string
+              reason:
+                description: 個別エラーの発生理由
+                type: string
 
   parameters:
     quest-path:
