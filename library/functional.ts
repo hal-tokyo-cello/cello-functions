@@ -1,33 +1,24 @@
 import { isApiError } from "./test";
 import { ApiError, ApiResponse, Error } from "./types";
 
-export const catch404 = (...error: Error[]) =>
-  isApiError(error?.[0])
-    ? Promise.reject(error)
-    : Promise.reject({
-        body: {
-          error: {
-            code: 404,
-            errors: error,
-            message: "invalid request",
+const ErrorBind: (code: number, message: string) => (source: Error[] | ApiError) => Promise<never> =
+  (code, message) => (source) =>
+    isApiError(source)
+      ? Promise.reject(source)
+      : Promise.reject({
+          body: {
+            error: {
+              code: code,
+              errors: source,
+              message: message,
+            },
           },
-        },
-        statusCode: 404,
-      });
+          statusCode: code,
+        });
 
-export const catch500 = (...error: Error[]) =>
-  isApiError(error?.[0])
-    ? Promise.reject(error)
-    : Promise.reject({
-        body: {
-          error: {
-            code: 500,
-            errors: error,
-            message: "server error",
-          },
-        },
-        statusCode: 500,
-      });
+export const catch404 = ErrorBind(404, "invalid request");
+
+export const catch500 = ErrorBind(500, "server error");
 
 export const conclude = <T>(res: T): ApiResponse<T> => ({ body: res });
 
