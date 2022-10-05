@@ -1,64 +1,33 @@
-import { catch404, catch500, conclude, report } from "./functional";
+import { catch404, catch500, conclude, ErrorBind, report } from "./functional";
 import { ApiError, Error } from "./types";
 
-it("should catch 404 error", () => {
-  const source: Error[] = [{ message: "test error", reason: "some reason" }];
+const testCatcher = ErrorBind(999, "test catcher");
 
-  const res = Promise.reject(source).catch(catch404);
-  expect(res).rejects.toEqual<ApiError>({
+it("should handle polymorphism", () => {
+  const inner = { message: "test error", reason: "some reason" };
+  const expected = {
     body: {
-      error: {
-        code: 404,
-        errors: source,
-        message: "invalid request",
-      },
+      error: { code: 999, errors: [inner], message: "test catcher" },
     },
-    statusCode: 404,
-  });
-});
+    statusCode: 999,
+  };
 
-it("should catch 500 error", () => {
-  const source: Error[] = [{ message: "test error", reason: "some reason" }];
-
-  const res = Promise.reject(source).catch(catch500);
-  expect(res).rejects.toEqual<ApiError>({
-    body: {
-      error: {
-        code: 500,
-        errors: source,
-        message: "server error",
-      },
-    },
-    statusCode: 500,
-  });
+  expect(() => testCatcher(inner)).rejects.toEqual(expected);
+  expect(() => testCatcher([inner])).rejects.toEqual(expected);
 });
 
 it("should not rewrap error", () => {
-  const source: Error[] = [{ message: "source", reason: "some" }];
-
-  const res404 = Promise.reject(source).catch(catch404).catch(catch500);
-  expect(res404).rejects.toEqual<ApiError>({
+  const apiErr: ApiError = {
     body: {
       error: {
-        code: 404,
-        errors: source,
-        message: "invalid request",
+        code: 999,
+        errors: [{ message: "some message", reason: "no reason" }],
+        message: "text catcher",
       },
     },
-    statusCode: 404,
-  });
-
-  const res500 = Promise.reject(source).catch(catch500).catch(catch404);
-  expect(res500).rejects.toEqual<ApiError>({
-    body: {
-      error: {
-        code: 500,
-        errors: source,
-        message: "server error",
-      },
-    },
-    statusCode: 500,
-  });
+    statusCode: 999,
+  };
+  expect(() => testCatcher(apiErr)).rejects.toEqual(apiErr);
 });
 
 it("should wrap response body", () => {

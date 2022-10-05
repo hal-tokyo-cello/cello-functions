@@ -1,7 +1,7 @@
 import { isApiError } from "./test";
 import { ApiError, ApiResponse, Error } from "./types";
 
-const ErrorBind: (code: number, message: string) => (source: Error[] | ApiError) => Promise<never> =
+export const ErrorBind: (code: number, message: string) => (source: Error | Error[] | ApiError) => Promise<never> =
   (code, message) => (source) =>
     isApiError(source)
       ? Promise.reject(source)
@@ -9,7 +9,7 @@ const ErrorBind: (code: number, message: string) => (source: Error[] | ApiError)
           body: {
             error: {
               code: code,
-              errors: source,
+              errors: source instanceof Array ? [...source] : [source],
               message: message,
             },
           },
