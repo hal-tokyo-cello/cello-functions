@@ -25,8 +25,7 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
     return user != undefined ? Promise.resolve(user) : Promise.reject(`user not found with email ${login}`);
   };
 
-  registerNewUser = (user: User): Promise<any> =>
-    Promise.resolve(this.users.push(user)).then(() => console.table(this.users));
+  registerNewUser = (user: User): Promise<void> => Promise.resolve(this.users.push(user)).then(() => {});
 
   getUserPassword = (id: Identifier): Promise<string> =>
     this.getUser(id).then((user) => user.password ?? Promise.reject("cannot find user password"));
