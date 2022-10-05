@@ -6,7 +6,7 @@ import handler, { SignInRequest } from ".";
 import { isApiError, TestMemoryDB } from "../library/test";
 import { ApiRequest, User as ApiUser } from "../library/types";
 
-let db = TestMemoryDB.instance;
+let db: TestMemoryDB;
 
 const johnDoe = { email: "johndoe@example.com", password: "john-doe-example" };
 
