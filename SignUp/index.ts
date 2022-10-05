@@ -12,13 +12,7 @@ export interface SignUpRequest {
 export interface SignUpResponse {}
 
 const signUp = ({ email, password }: SignUpRequest): SignUpResponse =>
-  User.register(MemoryDatabase.instance, email, password)
-    .then(() => ({}))
-    .catch((error) =>
-      !!error
-        ? Promise.reject({ message: "try again later", reason: "internal error" })
-        : Promise.reject({ message: "fail to register user", reason: "internal error" })
-    );
+  User.register(MemoryDatabase.instance, email, password).then(() => ({}));
 
 const verifyEmail = (req: SignUpRequest): Promise<SignUpRequest> =>
   validator.isEmail(req.email) ? Promise.resolve(req) : Promise.reject({ message: "invalid email" } as Error);
