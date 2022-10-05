@@ -12,7 +12,7 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
     return MemoryDatabase.storage;
   }
 
-  protected constructor(protected users: User[] = [], protected quests: Quest[] = []) {}
+  protected constructor(public users: User[] = [], public quests: Quest[] = []) {}
 
   /**
    * Look up user by his email address.

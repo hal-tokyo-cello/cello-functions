@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["post"],
-      "route": "signIn"
+      "route": "users/signin"
     },
     {
       "type": "http",

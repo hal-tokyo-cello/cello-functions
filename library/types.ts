@@ -1,5 +1,31 @@
 import { Context, HttpRequest, HttpResponse } from "@azure/functions";
 
+export interface User {
+  accountId: string;
+  name: string;
+  email: string;
+  avatar?: Avatar;
+  createDate?: number;
+  updateDate?: number;
+  leaveDate?: number;
+  lastLogin?: number;
+}
+
+export interface Avatar {
+  race: number;
+  level: number;
+  levelMax: number;
+  totalExp: number;
+  evolved: boolean;
+  iconUrl?: string;
+  imageUrl?: string;
+}
+
+export interface UserCredential {
+  email: string;
+  password: string;
+}
+
 export interface ErrorResponse {
   error: {
     code: number;
