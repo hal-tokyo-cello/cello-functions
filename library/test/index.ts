@@ -5,7 +5,7 @@ export const isApiError = (obj: any): obj is ApiError => obj?.body?.error != und
 
 export class TestMemoryDB extends MemoryDatabase {
   public static refresh(): TestMemoryDB {
-    this.storage = new TestMemoryDB();
-    return this.instance;
+    TestMemoryDB.storage = new TestMemoryDB();
+    return TestMemoryDB.storage;
   }
 }

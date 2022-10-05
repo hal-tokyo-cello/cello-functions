@@ -1,8 +1,29 @@
 import { User } from "cello-core/core";
 import { TestMemoryDB } from "../test";
 
-describe("user IO", () => {
-  let db: TestMemoryDB = TestMemoryDB.instance;
+describe("test db related", () => {
+  it("will refresh as new instance", () => {
+    const db1 = TestMemoryDB.instance;
+    const db2 = TestMemoryDB.refresh();
+
+    expect(db2).not.toBe(db1); // not the same instance
+  });
+
+  class P {}
+  it("is different", () => {
+    const p1 = new P();
+    const p2 = new P();
+
+    expect(p2).not.toBe(p1);
+  });
+});
+
+describe("user related", () => {
+  let db: TestMemoryDB;
+
+  beforeEach(() => {
+    db = TestMemoryDB.refresh();
+  });
 
   const credential = { email: "alice@example.com", password: "password" };
   const accountId = "_42YGfwOEr8NJIkuRZh-JJoo3Og2qFytYOKOqqjG2XY";
