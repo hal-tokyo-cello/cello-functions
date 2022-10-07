@@ -1,7 +1,19 @@
 import { Answer, Avatar, Item, Player, Quest, User } from "cello-core/core";
 import { IAccountRepository, Identifier, IQuestRepository } from "cello-core/infrastructure";
 
+/**
+ * Predefined credentials.
+ */
+const preCred: { email: string; password: string }[] = [];
+
+/**
+ * Predefined quests.
+ */
+const preQuests: Quest[] = [];
+
 export class MemoryDatabase implements IAccountRepository, IQuestRepository {
+  public users: User[] = [];
+
   protected static storage?: MemoryDatabase;
 
   public static get instance(): MemoryDatabase {
@@ -12,7 +24,11 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
     return MemoryDatabase.storage;
   }
 
-  protected constructor(public users: User[] = [], public quests: Quest[] = []) {}
+  protected constructor(public quests: Quest[] = preQuests) {
+    preCred.forEach((cred) => User.register(this, cred.email, cred.password));
+  }
+
+  getQuests = (): Promise<Quest[]> => Promise.resolve(this.quests);
 
   /**
    * Look up user by his email address.
