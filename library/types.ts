@@ -1,5 +1,6 @@
 import { Context, HttpRequest, HttpResponse } from "@azure/functions";
 
+//#region Auth
 export interface User {
   accountId: string;
   name: string;
@@ -25,6 +26,29 @@ export interface UserCredential {
   email: string;
   password: string;
 }
+//#endregion
+
+//#region Quest
+export interface QuestSummary {
+  id: string; // FIX: property name for quest id might change
+  title: string;
+  experience: number;
+  genre: "MUL" | "COM";
+  cleared?: boolean;
+}
+
+export interface QuestDetail extends QuestSummary {
+  options: string[];
+}
+
+export interface AnswerQuestRequest {
+  answer: string;
+}
+
+export interface AnswerQuestResponse {
+  correct: boolean;
+}
+//#endregion
 
 export interface ErrorResponse {
   error: {
