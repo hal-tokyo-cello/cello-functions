@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../dist/quests/index.js"
+  "scriptFile": "../dist/GetQuestSummaryList/index.js"
 }

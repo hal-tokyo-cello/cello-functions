@@ -75,4 +75,4 @@ export type ApiError = ApiResponse<ErrorResponse>;
 export type ApiHandler<res = {}, req = {}> = (
   context: Context,
   req: ApiRequest<req>
-) => Promise<ApiResponse<res | ErrorResponse>>;
+) => Promise<ApiResponse<res> | ApiError>;
