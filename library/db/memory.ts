@@ -14,8 +14,16 @@ const preQuests: Quest[] = [];
 export class MemoryDatabase implements IAccountRepository, IQuestRepository {
   public users: User[] = [];
 
+  /**
+   * Since data is stored directed into this DAO,
+   * data access should be done through singleton instance instead of `this`.
+   * Also, `storage` might not be instantiated, data access should be done through `instance` instead of `storage`.
+   */
   protected static storage?: MemoryDatabase;
 
+  /**
+   * Singleton in memory storage.
+   */
   public static get instance(): MemoryDatabase {
     if (MemoryDatabase.storage == undefined) {
       MemoryDatabase.storage = new MemoryDatabase();
@@ -25,10 +33,10 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
   }
 
   protected constructor(public quests: Quest[] = preQuests) {
-    preCred.forEach((cred) => User.register(this, cred.email, cred.password));
+    preCred.forEach((cred) => User.register(MemoryDatabase.instance, cred.email, cred.password));
   }
 
-  getQuests = (): Promise<Quest[]> => Promise.resolve(this.quests);
+  getQuests = (): Promise<Quest[]> => Promise.resolve(MemoryDatabase.instance.quests);
 
   /**
    * Look up user by his email address.
@@ -36,15 +44,22 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
    * @returns User
    */
   getUser = (login: Identifier): Promise<User> => {
-    const user = this.users.find((user) => user.email === login);
+    const user = MemoryDatabase.instance.users.find((user) => user.email === login);
 
     return user != undefined ? Promise.resolve(user) : Promise.reject(`user not found with email ${login}`);
   };
 
-  registerNewUser = (user: User): Promise<void> => Promise.resolve(this.users.push(user)).then(() => {});
+  registerNewUser = (user: User): Promise<void> =>
+    Promise.resolve(MemoryDatabase.instance.users.push(user)).then(() => {});
 
+  /**
+   * This might never be called, since password is stored in the User instance in memory,
+   * and `getUserPassword` will only be called then User's password is undefined.
+   *
+   * @see {@link User}
+   */
   getUserPassword = (id: Identifier): Promise<string> =>
-    this.getUser(id).then((user) => user.password ?? Promise.reject("cannot find user password"));
+    MemoryDatabase.instance.getUser(id).then((user) => user.password ?? Promise.reject("cannot find user password"));
 
   updateUserPassword(user: Identifier, password: string): Promise<void> {
     throw new Error("Method not implemented.");
