@@ -1,5 +1,5 @@
-import { catch404, catch500, conclude, ErrorBind, report } from "./functional";
-import { ApiError, Error } from "./types";
+import { catch404, conclude, ErrorBind, report } from ".";
+import { ApiError, Error } from "../types";
 
 const testCatcher = ErrorBind(999, "test catcher");
 

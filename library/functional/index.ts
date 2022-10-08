@@ -1,5 +1,5 @@
-import { isApiError } from "./test";
-import { ApiError, ApiResponse, Error } from "./types";
+import { isApiError } from "../test";
+import { ApiError, ApiResponse, Error } from "../types";
 
 export const ErrorBind: (code: number, message: string) => (source: Error | Error[] | ApiError) => Promise<never> =
   (code, message) => (source) =>
