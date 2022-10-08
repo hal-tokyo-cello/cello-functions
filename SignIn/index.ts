@@ -20,7 +20,5 @@ const signIn = (req: SignInRequest): Promise<SignInResponse> =>
     (error) => Promise.reject({ message: "sign in failed", reason: "unregistered email" })
   );
 
-const httpTrigger: ApiHandler<SignInResponse, SignInRequest> = (context, req) =>
+export const run: ApiHandler<SignInResponse, SignInRequest> = (context, req) =>
   Promise.resolve(req.body).then(verifyEmail).then(signIn).catch(catch404).then(conclude, report);
-
-export default httpTrigger;

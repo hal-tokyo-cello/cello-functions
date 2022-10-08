@@ -31,11 +31,9 @@ export const summaries = (quest: Quest): QuestSummary => ({
   title: quest.title,
 });
 
-const httpTrigger: ApiHandler<GetQuestSummaryListResponse, GetQuestSummaryListRequest> = (context, req) =>
+export const run: ApiHandler<GetQuestSummaryListResponse, GetQuestSummaryListRequest> = (context, req) =>
   db
     .getQuests()
     .then((quests) => quests.map(summaries))
     .then((summaries) => ({ quests: summaries }))
     .then(conclude, report);
-
-export default httpTrigger;

@@ -2,7 +2,7 @@ import { PlayerUpgradeOption } from "cello-core/core";
 import { AvatarSelectApi } from "../library/api/avatarSelect";
 import { AccountRepository } from "../library/db/mongodb";
 
-const httpTrigger: AvatarSelectApi = async (context, req) => {
+export const run: AvatarSelectApi = async (context, req) => {
   let succeed = true;
   let error = "";
   try {
@@ -27,5 +27,3 @@ const httpTrigger: AvatarSelectApi = async (context, req) => {
     },
   };
 };
-
-export default httpTrigger;

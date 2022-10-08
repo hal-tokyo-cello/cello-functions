@@ -23,7 +23,7 @@ const verifyDuplicate = (req: SignUpRequest): Promise<SignUpRequest> =>
     () => Promise.resolve(req)
   );
 
-const httpTrigger: ApiHandler<SignUpResponse, SignUpRequest> = (context, req) =>
+export const run: ApiHandler<SignUpResponse, SignUpRequest> = (context, req) =>
   Promise.resolve(req.body)
     .then(verifyEmail)
     .then(verifyDuplicate)
@@ -31,5 +31,3 @@ const httpTrigger: ApiHandler<SignUpResponse, SignUpRequest> = (context, req) =>
     .then(signUp)
     .catch(catch500)
     .then(conclude, report);
-
-export default httpTrigger;

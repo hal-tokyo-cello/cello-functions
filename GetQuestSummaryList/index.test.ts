@@ -2,7 +2,7 @@ import { Context } from "@azure/functions";
 
 import { Answer, CombinationQuestion, MultipleChoiceQuestion, Quest } from "cello-core/core";
 
-import { default as handler, quest2Genre, summaries } from ".";
+import { quest2Genre, run, summaries } from ".";
 import { MemoryDatabase } from "../library/db/memory";
 import { isApiError } from "../library/test";
 import { ApiRequest, QuestSummary } from "../library/types";
@@ -64,7 +64,7 @@ test("quest summarizing", () => {
 it("should succeed", async () => {
   MemoryDatabase.instance.quests = [testCQ, testMC];
 
-  const result = await handler({} as Context, {} as ApiRequest);
+  const result = await run({} as Context, {} as ApiRequest);
 
   if (isApiError(result)) return;
 

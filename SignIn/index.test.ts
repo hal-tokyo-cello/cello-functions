@@ -2,7 +2,7 @@ import { Context } from "@azure/functions";
 
 import { User } from "cello-core/core";
 
-import handler, { SignInRequest } from ".";
+import { run, SignInRequest } from ".";
 import { isApiError, TestMemoryDB } from "../library/test";
 import { ApiRequest, User as ApiUser } from "../library/types";
 
@@ -18,17 +18,14 @@ beforeEach(() => {
 });
 
 it("should be succeed", async () => {
-  const result = await handler({} as Context, { body: johnDoe } as ApiRequest<SignInRequest>);
+  const result = await run({} as Context, { body: johnDoe } as ApiRequest<SignInRequest>);
 
   expect(isApiError(result)).toBeFalsy();
   expect(isUser(result.body)).toBeTruthy();
 });
 
 it("should fail for the email", async () => {
-  const result = await handler(
-    {} as Context,
-    { body: { email: "johndoe", password: "" } } as ApiRequest<SignInRequest>
-  );
+  const result = await run({} as Context, { body: { email: "johndoe", password: "" } } as ApiRequest<SignInRequest>);
 
   expect(isApiError(result)).toBeTruthy();
   if (!isApiError(result)) return;
@@ -37,10 +34,7 @@ it("should fail for the email", async () => {
 });
 
 it("should fail for the password", async () => {
-  const result = await handler(
-    {} as Context,
-    { body: { ...johnDoe, password: "qwerty" } } as ApiRequest<SignInRequest>
-  );
+  const result = await run({} as Context, { body: { ...johnDoe, password: "qwerty" } } as ApiRequest<SignInRequest>);
 
   expect(isApiError(result)).toBeTruthy();
   if (!isApiError(result)) return;
@@ -50,7 +44,7 @@ it("should fail for the password", async () => {
 });
 
 it("should fail for no register", async () => {
-  const result = await handler(
+  const result = await run(
     {} as Context,
     { body: { email: "janedoe@example.com", password: "jane-doe-password" } } as ApiRequest<SignInRequest>
   );
