@@ -5,6 +5,7 @@
     "module": "CommonJS",
     "rootDir": ".",
     "outDir": "dist",
+    "sourceMap": true,
     "removeComments": true,
     "newLine": "lf",
     "esModuleInterop": true,
