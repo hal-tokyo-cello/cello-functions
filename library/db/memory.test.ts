@@ -8,14 +8,6 @@ describe("test db related", () => {
 
     expect(db2).not.toBe(db1); // not the same instance
   });
-
-  class P {}
-  it("is different", () => {
-    const p1 = new P();
-    const p2 = new P();
-
-    expect(p2).not.toBe(p1);
-  });
 });
 
 describe("user related", () => {
