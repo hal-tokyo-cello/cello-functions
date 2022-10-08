@@ -1,6 +1,6 @@
 import validator from "validator";
 
-import { MemoryDatabase } from "../library/db/memory";
+import { db } from "../library/db";
 import { catch404, conclude, report } from "../library/functional";
 import { ApiHandler, User as ApiUser, UserCredential } from "../library/types";
 
@@ -12,7 +12,7 @@ const verifyEmail = (req: SignInRequest): Promise<SignInRequest> =>
   validator.isEmail(req.email) ? Promise.resolve(req) : Promise.reject({ message: "invalid email" } as Error);
 
 const signIn = (req: SignInRequest): Promise<SignInResponse> =>
-  MemoryDatabase.instance.getUser(req.email).then(
+  db.getUser(req.email).then(
     async (user) =>
       (await user.login({ email: req.email, password: req.password }))
         ? { accountId: user.accountId, email: user.email, name: "" }

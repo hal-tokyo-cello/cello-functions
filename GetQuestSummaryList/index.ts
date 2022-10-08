@@ -1,6 +1,6 @@
 import { CombinationQuestion, MultipleChoiceQuestion, Quest } from "cello-core/core";
 
-import { MemoryDatabase } from "../library/db/memory";
+import { db } from "../library/db";
 import { conclude, report } from "../library/functional";
 import { ApiHandler, QuestSummary } from "../library/types";
 
@@ -9,8 +9,6 @@ export interface GetQuestSummaryListRequest {}
 export interface GetQuestSummaryListResponse {
   quests: QuestSummary[];
 }
-
-const db = MemoryDatabase.instance;
 
 export const quest2Genre = (quest: Quest): QuestSummary["genre"] | undefined => {
   if (quest instanceof MultipleChoiceQuestion) {
