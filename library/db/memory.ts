@@ -83,9 +83,13 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
   unregisterPlayer(id: Identifier): Promise<void> {
     throw new Error("Method not implemented.");
   }
-  getQuest(id: Identifier): Promise<Quest> {
-    throw new Error("Method not implemented.");
-  }
+
+  getQuest = (id: Identifier): Promise<Quest> => {
+    const quest = MemoryDatabase.instance.quests.find((quest) => quest.id === id);
+
+    return quest != undefined ? Promise.resolve(quest) : Promise.reject(`quest with id ${id} not found`);
+  };
+
   getAnswer(id: Identifier): Promise<Answer> {
     throw new Error("Method not implemented.");
   }

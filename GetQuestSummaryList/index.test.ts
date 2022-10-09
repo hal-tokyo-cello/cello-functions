@@ -15,7 +15,7 @@ it("should succeed", async () => {
 
   const result = await run({} as Context, {} as ApiRequest);
 
-  if (isApiError(result)) return;
+  if (isApiError(result)) fail();
 
   expect((result.body.quests.length = 2));
   expect(result.body.quests).toContainEqual<QuestSummary>({

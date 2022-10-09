@@ -28,7 +28,7 @@ it("should fail for the email", async () => {
   const result = await run({} as Context, { body: { email: "johndoe", password: "" } } as ApiRequest<SignInRequest>);
 
   expect(isApiError(result)).toBeTruthy();
-  if (!isApiError(result)) return;
+  if (!isApiError(result)) fail();
 
   expect(result.statusCode).toBe(404);
 });
@@ -37,7 +37,7 @@ it("should fail for the password", async () => {
   const result = await run({} as Context, { body: { ...johnDoe, password: "qwerty" } } as ApiRequest<SignInRequest>);
 
   expect(isApiError(result)).toBeTruthy();
-  if (!isApiError(result)) return;
+  if (!isApiError(result)) fail();
 
   expect(result.statusCode).toBe(404);
   expect(result.body.error.errors[0].reason).toContain("credential");
@@ -50,7 +50,7 @@ it("should fail for no register", async () => {
   );
 
   expect(isApiError(result)).toBeTruthy();
-  if (!isApiError(result)) return;
+  if (!isApiError(result)) fail();
 
   expect(result.statusCode).toBe(404);
   expect(result.body.error.errors[0].reason).toContain("unregistered");
