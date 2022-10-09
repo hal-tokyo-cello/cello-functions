@@ -40,14 +40,6 @@ export interface QuestSummary {
 export interface QuestDetail extends QuestSummary {
   options: string[];
 }
-
-export interface AnswerQuestRequest {
-  answer: string;
-}
-
-export interface AnswerQuestResponse {
-  correct: boolean;
-}
 //#endregion
 
 export interface ErrorResponse {
