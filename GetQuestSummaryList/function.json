@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["post"],
-      "route": "users/signin"
+      "methods": ["get"],
+      "route": "quests"
     },
     {
       "type": "http",
@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../dist/SignIn/index.js"
+  "scriptFile": "../dist/GetQuestSummaryList/index.js"
 }

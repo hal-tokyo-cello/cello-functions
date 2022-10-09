@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["post"],
-      "route": "users/signin"
+      "route": "quests/{quest}/answer"
     },
     {
       "type": "http",
@@ -14,5 +14,5 @@
       "name": "$return"
     }
   ],
-  "scriptFile": "../dist/SignIn/index.js"
+  "scriptFile": "../dist/AnswerQuest/index.js"
 }
