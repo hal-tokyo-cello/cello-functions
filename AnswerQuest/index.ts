@@ -10,6 +10,6 @@ export interface AnswerQuestResponse {
 }
 
 export const run: ApiHandler<AnswerQuestResponse, AnswerQuestRequest> = (context, req) =>
-  Promise.resolve({ quest: context.bindingData.quest, req, ...req })
+  Promise.resolve({ quest: context.bindingData.quest, req, ...req.body })
     .then(() => ({ correct: true }))
     .then(conclude, report);
