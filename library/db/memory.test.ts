@@ -1,6 +1,9 @@
 import { User } from "cello-core/core";
 import { TestMemoryDB } from "../test";
 
+const credential = { email: "alice@example.com", password: "password" };
+const accountId = "_42YGfwOEr8NJIkuRZh-JJoo3Og2qFytYOKOqqjG2XY";
+
 describe("test db related", () => {
   it("will refresh as new instance", () => {
     const db1 = TestMemoryDB.instance;
@@ -10,15 +13,12 @@ describe("test db related", () => {
   });
 });
 
-describe("user related", () => {
+describe("user sign up", () => {
   let db: TestMemoryDB;
 
   beforeEach(() => {
     db = TestMemoryDB.refresh();
   });
-
-  const credential = { email: "alice@example.com", password: "password" };
-  const accountId = "_42YGfwOEr8NJIkuRZh-JJoo3Og2qFytYOKOqqjG2XY";
 
   it("register user", () => {
     jest.spyOn(db, "registerNewUser");
@@ -42,4 +42,17 @@ describe("user related", () => {
   it("cannot find the user", () => {
     expect(() => db.getUser("bob@example.com")).rejects.not.toBeUndefined();
   });
+});
+
+describe("account management", () => {
+  let db: TestMemoryDB;
+  let userId: string;
+
+  beforeEach(async () => {
+    db = TestMemoryDB.refresh();
+    User.register(db, credential.email, credential.password);
+    userId = (await db.getUser(credential.email)).accountId;
+  });
+
+  it("should update password", () => {});
 });

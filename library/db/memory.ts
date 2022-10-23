@@ -40,11 +40,11 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
 
   /**
    * Look up user by his email address.
-   * @param login Email
+   * @param login Email or account id.
    * @returns User
    */
   getUser = (login: Identifier): Promise<User> => {
-    const user = MemoryDatabase.instance.users.find((user) => user.email === login);
+    const user = MemoryDatabase.instance.users.find((user) => user.email === login || user.accountId === login);
 
     return user != undefined ? Promise.resolve(user) : Promise.reject(`user not found with email ${login}`);
   };
@@ -61,12 +61,18 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
   getUserPassword = (id: Identifier): Promise<string> =>
     MemoryDatabase.instance.getUser(id).then((user) => user.password ?? Promise.reject("cannot find user password"));
 
-  updateUserPassword(user: Identifier, password: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  getPlayer(id: Identifier): Promise<Player> {
-    throw new Error("Method not implemented.");
-  }
+  updateUserPassword = (user: Identifier, password: string): Promise<void> =>
+    MemoryDatabase.instance
+      .getUser(user)
+      .then((user) => (user.password = password))
+      .then(() => {});
+
+  getPlayer = (id: Identifier): Promise<Player> =>
+    MemoryDatabase.instance
+      .getUser(id)
+      .then((user) =>
+        user instanceof Player ? Promise.resolve(user) : Promise.reject("registered user is not a player")
+      );
   getAvatar(player: Identifier): Promise<Avatar> {
     throw new Error("Method not implemented.");
   }
@@ -74,9 +80,12 @@ export class MemoryDatabase implements IAccountRepository, IQuestRepository {
 
   setLastLogin = (timestamp: number): Promise<void> => Promise.resolve();
 
-  upgradeUserToPlayer(user: User, player: Player): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+  upgradeUserToPlayer = (user: User, player: Player): Promise<void> =>
+    (!!user.password ? Promise.resolve(user.password) : Promise.reject("cannot upgrade user without password"))
+      .then((password) => player.updatePassword(password))
+      .then(() => MemoryDatabase.instance.users.push(player))
+      .then(() => {});
+
   unregisterUser(id: Identifier): Promise<void> {
     throw new Error("Method not implemented.");
   }
